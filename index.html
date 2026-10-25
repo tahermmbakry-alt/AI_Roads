@@ -3,555 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نظام إدارة وتقييم أصول الطرق الذكي</title>
-    
-    <!-- خط القاهرة -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS -->
+    <title>نظام إدارة وتقييم أصول الطرق الذكي (نسخة المحاكاة)</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap');
+        body { font-family: 'Tajawal', sans-serif; background-color: #f1f5f9; }
+        
+        @media print {
+            body { background-color: white; }
+            .print\:hidden { display: none !important; }
+            header { position: static !important; }
+            .shadow-lg { box-shadow: none !important; border: 1px solid #e2e8f0; }
+            .container { max-width: 100% !important; padding: 0 !important; }
+            #map { height: 300px !important; }
+        }
+    </style>
     <script>
         tailwind.config = {
             theme: {
-                extend: {
-                    fontFamily: { sans: ['Cairo', 'sans-serif'] },
-                    colors: {
-                        primary: '#1E3A8A', 
-                        secondary: '#3B82F6', 
-                        accent: '#F59E0B',
-                        dark: '#111827'
-                    }
-                }
+                extend: { colors: { primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 800: '#1e40af', 900: '#1e3a8a' } } }
             }
         }
     </script>
-
-    <!-- Leaflet CSS للخرائط -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <!-- Leaflet JS للخرائط -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <style>
-        body { background-color: #F3F4F6; }
-        .spinner {
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top: 3px solid #fff;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        #map { z-index: 10; } /* منع تداخل الخريطة مع القوائم المنسدلة */
-        
-        /* تنسيقات الطباعة الخاصة */
-        @media print {
-            body { background-color: white; color: black; }
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
-            .print-shadow-none { box-shadow: none !important; border: 1px solid #ddd !important; }
-            .print-break-inside-avoid { page-break-inside: avoid; }
-            @page { margin: 1cm; size: A4 portrait; }
-            /* تحسين عرض الخريطة في الطباعة */
-            #map { height: 300px !important; width: 100% !important; }
-            /* إصلاح مشكلة تداخل الشريط العلوي مع المحتوى (الصورة) عند الطباعة */
-            header { position: static !important; }
-        }
-    </style>
 </head>
-<body class="text-gray-800 antialiased pb-10">
+<body class="text-slate-800 pb-20">
 
-    <!-- مفتاح الـ API المخفي -->
-    <input type="hidden" id="apiKey" value="AQ.Ab8RN6IQ-tWvNCp61DSokPeyrOJQcqakPCBOnXBAvb2ITbe8LQ">
-
-    <!-- الترويسة -->
-    <header class="bg-primary text-white shadow-md sticky top-0 z-40 print-shadow-none">
-        <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+    <header class="bg-primary-900 text-white sticky top-0 z-40 shadow-md print:hidden">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary-100" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
                 <div>
-                    <h1 class="text-xl font-bold">نظام إدارة وتقييم أصول الطرق الذكي</h1>
-                    <p class="text-xs text-blue-200">الصيانة التنبؤية المدعومة بالذكاء الاصطناعي</p>
+                    <h1 class="text-xl font-bold leading-tight">نظام إدارة وتقييم أصول الطرق الذكي</h1>
+                    <p class="text-xs text-primary-100 opacity-80">نسخة المحاكاة التدريبية (بدون إنترنت)</p>
                 </div>
             </div>
-            <button onclick="toggleManual()" class="no-print bg-blue-700 hover:bg-blue-600 px-3 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                </svg>
+            <button onclick="document.getElementById('manualModal').classList.remove('hidden')" class="text-primary-100 hover:text-white flex items-center gap-1 bg-primary-800 px-3 py-1.5 rounded-lg text-sm transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 دليل الاستخدام
             </button>
         </div>
     </header>
-
-    <!-- ترويسة خاصة بالطباعة فقط -->
-    <div class="hidden print-only max-w-4xl mx-auto px-4 pt-6 pb-4 border-b-2 border-gray-800 mb-6 text-center">
-        <h2 class="text-3xl font-bold mb-2">تقرير فحص وتقييم أصول الطرق</h2>
-        <p class="text-gray-600" id="printDate"></p>
+    
+    <!-- Header مخصص للطباعة فقط -->
+    <div class="hidden print:block bg-primary-900 text-white p-4 mb-4">
+        <h1 class="text-2xl font-bold">تقرير التقييم الفني لأصول الطرق</h1>
+        <p class="text-sm">نظام إدارة وتقييم أصول الطرق الذكي</p>
     </div>
 
-    <main class="p-4 max-w-4xl mx-auto space-y-6 mt-4">
+    <main class="container mx-auto px-4 mt-6 max-w-4xl space-y-6">
 
-        <!-- الشبكة الرئيسية (عمودين في الشاشات الكبيرة) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- القسم 1: الموقع الجغرافي (GIS) -->
+        <section class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100">
+            <div class="flex items-center gap-2 mb-4 text-primary-800">
+                <div class="bg-primary-100 p-2 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
+                <h2 class="text-xl font-bold">1. التوثيق المكاني (GIS)</h2>
+            </div>
             
-            <!-- العمود الأيمن: الخريطة والصورة -->
-            <div class="space-y-6">
-                <!-- قسم الموقع الجغرافي -->
-                <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 print-shadow-none print-break-inside-avoid">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="bg-blue-100 text-secondary p-1.5 rounded-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg></span>
-                        1. الموقع الجغرافي (GIS)
-                    </h2>
-                    
-                    <!-- الخريطة -->
-                    <div id="map" class="h-64 w-full rounded-xl border border-gray-300 mb-3"></div>
-                    
-                    <div class="flex gap-2 no-print">
-                        <button id="btnCurrentLocation" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold py-2 px-3 rounded-lg transition-colors border border-gray-300 flex justify-center items-center gap-1">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
-                            موقعي الحالي
-                        </button>
-                    </div>
-                    
-                    <div class="mt-3 p-3 bg-blue-50 border border-blue-100 rounded-lg text-sm text-blue-800 flex items-center justify-between">
-                        <div dir="ltr" id="coordsDisplay" class="font-medium">23.5859, 58.4059</div>
-                        <a id="gmapsLink" href="https://maps.google.com/?q=23.5859,58.4059" target="_blank" class="text-blue-600 hover:underline flex items-center text-xs">
-                            فتح في خرائط جوجل <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path><path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"></path></svg>
-                        </a>
-                    </div>
-                </section>
-
-                <!-- قسم الصورة -->
-                <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 print-shadow-none print-break-inside-avoid">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="bg-purple-100 text-purple-600 p-1.5 rounded-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg></span>
-                        2. التوثيق البصري
-                    </h2>
-                    
-                    <div class="mb-4 no-print">
-                        <input type="file" id="imageInput" accept="image/*" class="hidden">
-                        <label for="imageInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-purple-300 rounded-xl bg-purple-50 cursor-pointer hover:bg-purple-100 transition-colors">
-                            <svg class="h-8 w-8 text-purple-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                            <span class="text-sm font-semibold text-purple-700">اضغط لالتقاط أو رفع صورة للشارع</span>
-                        </label>
-                    </div>
-                    
-                    <img id="imagePreview" class="hidden w-full h-56 object-cover rounded-xl border border-gray-200 shadow-sm" alt="صورة العيب">
-                    
-                    <button id="btnAnalyze" class="no-print mt-4 w-full bg-secondary hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-md flex justify-center items-center gap-2 disabled:opacity-50">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        <span id="btnAnalyzeText">تحليل الصورة بالذكاء الاصطناعي</span>
-                        <div id="aiLoading" class="spinner hidden"></div>
-                    </button>
-                    
-                    <!-- رسالة خطأ الذكاء الاصطناعي -->
-                    <div id="aiError" class="hidden mt-3 bg-red-50 text-red-600 text-sm p-3 rounded-lg border border-red-200 font-semibold"></div>
-                </section>
+            <div class="print:hidden mb-3">
+                <button onclick="getCurrentLocation()" class="bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-700 transition-colors w-full sm:w-auto">
+                    📍 التحديد بموقعي الحالي
+                </button>
+                <p class="text-sm text-slate-500 mt-2">أو انقر على أي مكان في الخريطة لتحديد موقع العيب يدوياً.</p>
             </div>
 
-            <!-- العمود الأيسر: التحليل والقرار -->
-            <div class="space-y-6">
-                <!-- تقرير الذكاء الاصطناعي -->
-                <section id="aiResultSection" class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 print-shadow-none print-break-inside-avoid">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="bg-indigo-100 text-indigo-600 p-1.5 rounded-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg></span>
-                        3. تقرير تقييم الحالة (AI)
-                    </h2>
-                    
-                    <div id="aiEmptyState" class="text-sm text-gray-500 text-center py-6">
-                        قم برفع الصورة والضغط على تحليل لتوليد التقرير تلقائياً.
-                    </div>
-
-                    <div id="aiDataContent" class="hidden space-y-4">
-                        <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-lg">
-                            <span class="block text-xs font-bold text-indigo-500 mb-1">نوع العيب المكتشف:</span>
-                            <span id="aiDefectType" class="text-indigo-900 font-semibold text-lg"></span>
-                        </div>
-                        <div class="bg-gray-50 border border-gray-200 p-3 rounded-lg">
-                            <span class="block text-xs font-bold text-gray-500 mb-1">الوصف الفني:</span>
-                            <span id="aiDescription" class="text-gray-800 text-sm leading-relaxed"></span>
-                        </div>
-                        <div class="flex items-center gap-2 bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
-                            <span class="text-xs font-bold text-yellow-700">الشدة المقدرة:</span>
-                            <span id="aiSeverityBadge" class="px-2 py-1 rounded text-xs font-bold text-white"></span>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- قسم دعم القرار الهندسي -->
-                <section class="bg-white rounded-2xl shadow-sm border border-gray-200 p-5 print-shadow-none print-break-inside-avoid">
-                    <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-                        <span class="bg-green-100 text-green-600 p-1.5 rounded-lg"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></span>
-                        4. القرار الهندسي والأولوية
-                    </h2>
-
-                    <div class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">حجم المرور (Traffic)</label>
-                                <select id="trafficSelect" class="no-print w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-secondary focus:border-secondary block p-2.5">
-                                    <option value="1">خفيف (1)</option>
-                                    <option value="2" selected>متوسط (2)</option>
-                                    <option value="3">كثيف (3)</option>
-                                </select>
-                                <span class="hidden print-only font-semibold text-sm" id="printTraffic"></span>
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-gray-700 mb-1">الخطورة (Risk)</label>
-                                <select id="riskSelect" class="no-print w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-secondary focus:border-secondary block p-2.5">
-                                    <option value="1">منخفضة (1)</option>
-                                    <option value="2" selected>متوسطة (2)</option>
-                                    <option value="3">مرتفعة (3)</option>
-                                </select>
-                                <span class="hidden print-only font-semibold text-sm" id="printRisk"></span>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-1">شدة التلف (Condition) - <span class="text-secondary text-[10px]">تحدث تلقائياً</span></label>
-                            <select id="severitySelect" class="no-print w-full bg-blue-50 border border-blue-300 text-blue-900 text-sm rounded-lg focus:ring-secondary focus:border-secondary block p-2.5 font-bold pointer-events-none opacity-80" tabindex="-1">
-                                <option value="1">طفيف (1)</option>
-                                <option value="2" selected>متوسط (2)</option>
-                                <option value="3">شديد (3)</option>
-                            </select>
-                            <span class="hidden print-only font-semibold text-sm" id="printSeverity"></span>
-                        </div>
-
-                        <!-- نتيجة القرار -->
-                        <div id="decisionResult" class="mt-4 p-4 rounded-xl border-2 text-center transition-all bg-gray-50 border-gray-200">
-                            <h3 id="decisionTitle" class="text-lg font-bold mb-1 text-gray-700">لم يتم الحساب بعد</h3>
-                            <p id="decisionDesc" class="text-xs font-medium text-gray-500 mb-2">أكمل البيانات أعلاه لتحديد الأولوية</p>
-                            <div class="inline-block px-3 py-1 bg-white rounded-full text-xs font-bold border border-gray-200 shadow-sm">
-                                النقاط: <span id="decisionScore">0</span> / 9
-                            </div>
-                        </div>
-                    </div>
-                </section>
+            <div id="map" class="h-64 rounded-xl border border-slate-300 z-10 w-full mb-3"></div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <span class="text-xs text-slate-500 block mb-1">خط العرض (Latitude)</span>
+                    <span id="latDisplay" class="font-bold text-slate-700 dir-ltr text-left block">-</span>
+                </div>
+                <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                    <span class="text-xs text-slate-500 block mb-1">خط الطول (Longitude)</span>
+                    <span id="lngDisplay" class="font-bold text-slate-700 dir-ltr text-left block">-</span>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <!-- زر الطباعة -->
-        <div class="text-center mt-8 no-print pb-8">
-            <button onclick="prepareAndPrint()" class="bg-dark hover:bg-gray-800 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition-transform transform hover:-translate-y-1 flex items-center justify-center gap-2 mx-auto">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                طباعة التقرير الفني
-            </button>
-        </div>
-    </main>
+        <!-- القسم 2: التوثيق البصري والتحليل -->
+        <section class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100">
+            <div class="flex items-center gap-2 mb-4 text-purple-700">
+                <div class="bg-purple-100 p-2 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
+                <h2 class="text-xl font-bold">2. التوثيق البصري والتحليل (محاكاة AI)</h2>
+            </div>
 
-    <!-- Modal دليل الاستخدام -->
-    <div id="manualModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden transform transition-all">
-            <div class="bg-primary text-white p-4 flex justify-between items-center">
-                <h3 class="font-bold text-lg">دليل استخدام التطبيق (خطوات الورشة)</h3>
-                <button onclick="toggleManual()" class="text-white hover:text-gray-200">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            <div class="print:hidden space-y-3 mb-5">
+                <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                <label for="imageInput" class="cursor-pointer bg-purple-100 text-purple-800 py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-purple-200 transition-colors w-full border border-purple-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                    التقاط أو رفع صورة للعيب
+                </label>
+
+                <button type="button" onclick="document.getElementById('galleryModal').classList.remove('hidden')" class="w-full bg-slate-100 text-slate-700 py-3 px-4 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-slate-200 transition-colors border border-slate-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                    استخدام صور تجريبية جاهزة (للتدريب)
                 </button>
             </div>
-            <div class="p-6 space-y-5">
-                <div class="flex gap-3 items-start">
-                    <div class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center font-bold shrink-0">1</div>
-                    <div>
-                        <h4 class="font-bold text-gray-800">تحديد الموقع (GIS)</h4>
-                        <p class="text-sm text-gray-600">يمكنك سحب الخريطة والنقر لتحديد موقع العيب بدقة، أو الضغط على "موقعي الحالي" لاستخدام الـ GPS.</p>
-                    </div>
+
+            <img id="imagePreview" class="hidden w-full max-h-80 object-cover rounded-xl border border-slate-200 mb-4" alt="صورة العيب">
+
+            <button id="analyzeBtn" onclick="analyzeImage()" disabled class="print:hidden w-full bg-slate-800 text-white py-3 rounded-xl font-bold flex items-center justify-center gap-2 disabled:bg-slate-300 disabled:cursor-not-allowed hover:bg-slate-700 transition-colors mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A12.014 12.014 0 0121 11.032V11h-2v-.032a10.012 10.012 0 00-8.2-9.742l.5-1.18zm-2.6 0l-.5 1.18A10.012 10.012 0 000 10.968V11h2v-.032A12.014 12.014 0 0110.7 1.046zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /></svg>
+                فحص الصورة (محاكاة)
+            </button>
+
+            <!-- نتيجة الذكاء الاصطناعي -->
+            <div id="aiResult" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <h3 class="font-bold text-slate-800 mb-3 border-b pb-2 flex items-center gap-2">
+                    <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">تقرير التحليل الآلي</span>
+                </h3>
+                <div class="space-y-3 text-sm text-slate-700">
+                    <div><strong class="text-slate-900 block">وصف العيب (Description):</strong> <span id="aiDesc">-</span></div>
+                    <div><strong class="text-slate-900 block">الأسباب المحتملة (Causes):</strong> <span id="aiCauses">-</span></div>
+                    <div><strong class="text-slate-900 block">التأثير على الأصل (Impact):</strong> <span id="aiImpact">-</span></div>
+                    <div><strong class="text-slate-900 block">التوصيات المبدئية (Recommendations):</strong> <span id="aiRecs">-</span></div>
                 </div>
-                <div class="flex gap-3 items-start">
-                    <div class="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center font-bold shrink-0">2</div>
-                    <div>
-                        <h4 class="font-bold text-gray-800">التوثيق (Computer Vision)</h4>
-                        <p class="text-sm text-gray-600">التقط صورة لسطح الطريق المتضرر، أو قم برفع صورة من جهازك.</p>
-                    </div>
+            </div>
+        </section>
+
+        <!-- القسم 3: دعم القرار والأولويات -->
+        <section class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100">
+            <div class="flex items-center gap-2 mb-4 text-emerald-700">
+                <div class="bg-emerald-100 p-2 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></div>
+                <h2 class="text-xl font-bold">3. مصفوفة تحديد الأولويات (Decision Support)</h2>
+            </div>
+            <p class="text-sm text-slate-500 mb-4">يتم تقييم أولوية التدخل بناءً على دمج التحليل مع التقييم الهندسي.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">شدة التلف (Condition)</label>
+                    <select id="severitySelect" onchange="calculatePriority()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 print:appearance-none print:border-none print:bg-white print:p-0 print:font-bold">
+                        <option value="1">1 - خفيف (لا توجد خطورة فورية)</option>
+                        <option value="2">2 - متوسط (يحتاج مراقبة)</option>
+                        <option value="3">3 - شديد (تدخل سريع)</option>
+                    </select>
+                    <p class="text-[10px] text-emerald-600 mt-1 print:hidden">* يتم تحديثه آلياً</p>
                 </div>
-                <div class="flex gap-3 items-start">
-                    <div class="bg-indigo-100 text-indigo-600 rounded-full w-8 h-8 flex items-center justify-center font-bold shrink-0">3</div>
-                    <div>
-                        <h4 class="font-bold text-gray-800">التحليل (AI Assessment)</h4>
-                        <p class="text-sm text-gray-600">اضغط على زر التحليل. سيقوم الذكاء الاصطناعي باكتشاف العيب، وتقييم شدته، وسيقوم <span class="font-bold text-secondary">بتحديث حقل "شدة التلف" تلقائياً</span> في قسم القرار.</p>
-                    </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">حجم المرور (Traffic)</label>
+                    <select id="trafficSelect" onchange="calculatePriority()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 print:appearance-none print:border-none print:bg-white print:p-0 print:font-bold">
+                        <option value="1">1 - منخفض (طريق فرعي/محلي)</option>
+                        <option value="2">2 - متوسط (طريق مجمع)</option>
+                        <option value="3">3 - مرتفع (طريق رئيسي/سريع)</option>
+                    </select>
                 </div>
-                <div class="flex gap-3 items-start">
-                    <div class="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center font-bold shrink-0">4</div>
-                    <div>
-                        <h4 class="font-bold text-gray-800">القرار الهندسي (Decision Making)</h4>
-                        <p class="text-sm text-gray-600">حدد تقييمك لحجم المرور ومستوى الخطورة. سيقوم النظام بحساب إجمالي النقاط وإصدار التوصية النهائية.</p>
-                    </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">عامل الخطورة (Risk)</label>
+                    <select id="riskSelect" onchange="calculatePriority()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 focus:outline-none focus:ring-2 focus:ring-emerald-500 print:appearance-none print:border-none print:bg-white print:p-0 print:font-bold">
+                        <option value="1">1 - منخفض (لا يؤثر على السلامة)</option>
+                        <option value="2">2 - متوسط (احتمال تضرر المركبات)</option>
+                        <option value="3">3 - مرتفع (يهدد الأرواح/حوادث)</option>
+                    </select>
                 </div>
-                <button onclick="toggleManual()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-2 rounded-xl mt-4">فهمت، ابدأ العمل</button>
+            </div>
+
+            <!-- النتيجة -->
+            <div id="priorityResult" class="p-4 rounded-xl border flex items-center justify-between transition-colors bg-slate-50 border-slate-200">
+                <div>
+                    <span class="block text-sm font-bold text-slate-500 mb-1">القرار الهندسي الموصى به:</span>
+                    <span id="priorityText" class="text-xl font-bold text-slate-700">بانتظار إدخال البيانات...</span>
+                </div>
+                <div class="text-center">
+                    <span class="block text-xs text-slate-500">إجمالي النقاط</span>
+                    <span id="priorityScore" class="text-2xl font-black text-slate-800">-</span> <span class="text-xs text-slate-400">/ 9</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- زر الطباعة -->
+        <button onclick="window.print()" class="print:hidden w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-xl shadow-lg transition-colors flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+            تصدير وطباعة التقرير الفني
+        </button>
+
+    </main>
+
+    <!-- دليل الاستخدام (Modal) -->
+    <div id="manualModal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 print:hidden">
+        <div class="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-primary-900">دليل تطبيق الصيانة التنبؤية</h3>
+                <button onclick="document.getElementById('manualModal').classList.add('hidden')" class="text-slate-400 hover:text-red-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 text-sm text-slate-700">
+                <p>هذا التطبيق يحاكي دورة عمل المهندس في نظام الصيانة التنبؤية (Predictive Maintenance):</p>
+                <ul class="space-y-3">
+                    <li class="flex gap-2">
+                        <span class="bg-primary-100 text-primary-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">1</span>
+                        <span><strong>تحديد الموقع (GIS):</strong> حدد موقع المشكلة بدقة عبر الخريطة أو زر الـ GPS.</span>
+                    </li>
+                    <li class="flex gap-2">
+                        <span class="bg-purple-100 text-purple-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">2</span>
+                        <span><strong>تحليل الصورة (محاكاة):</strong> التقط صورة وسيتم تحليلها لتقديم تصنيف وشدة التلف (Condition) تلقائياً.</span>
+                    </li>
+                    <li class="flex gap-2">
+                        <span class="bg-emerald-100 text-emerald-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">3</span>
+                        <span><strong>دعم القرار:</strong> كمهندس، قم بتقييم حجم المرور ومستوى الخطورة. سيقوم النظام بحساب الأولوية النهائية للتدخل.</span>
+                    </li>
+                    <li class="flex gap-2">
+                        <span class="bg-slate-200 text-slate-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">4</span>
+                        <span><strong>التقرير النهائي:</strong> اضغط طباعة لاستخراج تقرير فني احترافي.</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="p-4 bg-slate-50 border-t border-slate-100">
+                <button onclick="document.getElementById('manualModal').classList.add('hidden')" class="w-full bg-primary-600 text-white font-bold py-2 rounded-lg hover:bg-primary-700">فهمت، ابدأ العمل</button>
             </div>
         </div>
     </div>
 
-    <!-- كود الجافاسكربت -->
+    <!-- معرض الصور التجريبية (Modal) -->
+    <div id="galleryModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4 print:hidden">
+        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800">اختر صورة تجريبية للتدريب</h3>
+                <button onclick="document.getElementById('galleryModal').classList.add('hidden')" class="text-slate-400 hover:text-red-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="p-4 overflow-y-auto grid grid-cols-2 gap-3 bg-slate-100">
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Large_pothole_on_a_city_street.jpg/800px-Large_pothole_on_a_city_street.jpg')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Large_pothole_on_a_city_street.jpg/400px-Large_pothole_on_a_city_street.jpg" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="حفرة عميقة" crossorigin="anonymous">
+                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">حفر عميقة (Pothole)</div>
+                </div>
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Alligator_cracking.jpg/800px-Alligator_cracking.jpg')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Alligator_cracking.jpg/400px-Alligator_cracking.jpg" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تشققات تمساحية" crossorigin="anonymous">
+                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">تشققات تمساحية</div>
+                </div>
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Rutting_on_asphalt_road.jpg/800px-Rutting_on_asphalt_road.jpg')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Rutting_on_asphalt_road.jpg/400px-Rutting_on_asphalt_road.jpg" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تخدد" crossorigin="anonymous">
+                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">تخدد (Rutting)</div>
+                </div>
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Asphalt_crack.jpg/800px-Asphalt_crack.jpg')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Asphalt_crack.jpg/400px-Asphalt_crack.jpg" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تشقق طولي" crossorigin="anonymous">
+                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">تشقق طولي</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- متغيرات الحالة ---
-        let base64ImageData = null;
-        let imageMimeType = null;
-        let currentLat = 23.5859; // افتراضي مسقط
-        let currentLng = 58.4059;
+        // ------------------ 1. الخريطة الجغرافية (GIS) ------------------
+        let map;
+        let marker;
         
-        // --- 1. تهيئة الخريطة (Leaflet) ---
-        const map = L.map('map').setView([currentLat, currentLng], 12);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
-        
-        let marker = L.marker([currentLat, currentLng]).addTo(map);
+        function initMap() {
+            map = L.map('map').setView([23.5859, 58.4059], 11);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
 
-        function updateLocationUI(lat, lng) {
-            currentLat = lat;
-            currentLng = lng;
-            document.getElementById('coordsDisplay').innerText = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-            document.getElementById('gmapsLink').href = `https://maps.google.com/?q=${lat},${lng}`;
+            map.on('click', function(e) {
+                updateLocation(e.latlng.lat, e.latlng.lng);
+            });
         }
 
-        // اختيار الموقع بالنقر على الخريطة
-        map.on('click', function(e) {
-            const lat = e.latlng.lat;
-            const lng = e.latlng.lng;
-            marker.setLatLng([lat, lng]);
-            updateLocationUI(lat, lng);
-        });
+        function updateLocation(lat, lng) {
+            if (marker) { map.removeLayer(marker); }
+            marker = L.marker([lat, lng]).addTo(map);
+            map.setView([lat, lng], 15);
+            document.getElementById('latDisplay').innerText = lat.toFixed(6);
+            document.getElementById('lngDisplay').innerText = lng.toFixed(6);
+        }
 
-        // زر الموقع الحالي
-        document.getElementById('btnCurrentLocation').addEventListener('click', () => {
+        function getCurrentLocation() {
             if (navigator.geolocation) {
-                const btn = document.getElementById('btnCurrentLocation');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = 'جاري التحديد...';
-                
                 navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-                        map.setView([lat, lng], 15);
-                        marker.setLatLng([lat, lng]);
-                        updateLocationUI(lat, lng);
-                        btn.innerHTML = originalText;
-                    },
-                    (error) => {
-                        alert("تعذر الوصول للموقع. تأكد من تفعيل صلاحيات الـ GPS.");
-                        btn.innerHTML = originalText;
-                    }
+                    (position) => { updateLocation(position.coords.latitude, position.coords.longitude); },
+                    (error) => { alert("تعذر الحصول على الموقع. يرجى تحديد الموقع يدوياً على الخريطة."); }
                 );
-            }
-        });
-
-        // إصلاح حجم الخريطة عند العرض
-        setTimeout(() => map.invalidateSize(), 500);
-
-        // --- دليل الاستخدام ---
-        function toggleManual() {
-            const modal = document.getElementById('manualModal');
-            modal.classList.toggle('hidden');
-        }
-
-        // --- 2. معالجة الصورة ---
-        const imageInput = document.getElementById('imageInput');
-        const imagePreview = document.getElementById('imagePreview');
-        const btnAnalyze = document.getElementById('btnAnalyze');
-        const aiError = document.getElementById('aiError');
-
-        imageInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                aiError.classList.add('hidden');
-                btnAnalyze.disabled = false;
-                
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const dataUrl = event.target.result;
-                    imagePreview.src = dataUrl;
-                    imagePreview.classList.remove('hidden');
-                    
-                    const parts = dataUrl.split(',');
-                    const mimeMatch = parts[0].match(/:(.*?);/);
-                    if (mimeMatch && parts.length === 2) {
-                        imageMimeType = mimeMatch[1];
-                        base64ImageData = parts[1];
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-
-        // --- 3. الذكاء الاصطناعي (Gemini Structured JSON) ---
-        btnAnalyze.addEventListener('click', async () => {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            
-            if (!apiKey || apiKey === "مفتاحك_هنا") {
-                showAiError("لم يتم إعداد مفتاح API في كود التطبيق.");
-                return;
-            }
-            if (!base64ImageData) {
-                showAiError("يرجى التقاط أو اختيار صورة أولاً.");
-                return;
-            }
-
-            // تفعيل حالة التحميل
-            btnAnalyze.disabled = true;
-            document.getElementById('btnAnalyzeText').innerText = "جاري التحليل واستخراج البيانات...";
-            document.getElementById('aiLoading').classList.remove('hidden');
-            aiError.classList.add('hidden');
-            document.getElementById('aiEmptyState').classList.remove('hidden');
-            document.getElementById('aiDataContent').classList.add('hidden');
-
-            try {
-                // نطلب من النموذج إرجاع البيانات بصيغة JSON محددة بناءً على التعليمات
-                const prompt = `أنت مهندس خبير ومستشار في صيانة وتقييم أصول الطرق. قم بتحليل هذه الصورة بدقة واكتشاف عيوب الرصف (مثل الحفر، التشققات، التخدد، إلخ).
-                يجب أن يكون ردك بصيغة JSON فقط متوافق مع المخطط (Schema) التالي:
-                {
-                    "defect_type": "نوع العيب باختصار بالعربية",
-                    "severity": رقم صحيح يمثل الشدة من 1 إلى 3 (1=طفيف، 2=متوسط، 3=شديد),
-                    "description": "تقرير هندسي مفصل وشامل جداً يُكتب كفقرات مترابطة ويحتوي على: 1) وصف مرئي دقيق للعيب وحجمه الظاهري، 2) الأسباب الجذرية المحتملة للتدهور، 3) التأثير على السلامة المرورية والإنشائية، 4) خطوات الصيانة الموصى بها."
-                }
-                ملاحظة هامة: حقل الوصف (description) يجب أن يكون مفصلاً جداً واحترافياً ليوضح للمتدربين كيفية التحليل الهندسي المتقدم. إذا لم يكن هناك عيب، اجعل severity = 1 واذكر أن الحالة جيدة مع تبرير ذلك.`;
-
-                const payload = {
-                    contents: [{
-                        role: "user",
-                        parts: [
-                            { text: prompt },
-                            { inlineData: { mimeType: imageMimeType, data: base64ImageData } }
-                        ]
-                    }],
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                "defect_type": { type: "STRING" },
-                                "severity": { type: "INTEGER" },
-                                "description": { type: "STRING" }
-                            },
-                            required: ["defect_type", "severity", "description"]
-                        }
-                    }
-                };
-
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
-
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) throw new Error(result.error?.message || "خطأ في الاتصال بالخادم.");
-
-                if (result.candidates && result.candidates[0].content) {
-                    const jsonText = result.candidates[0].content.parts[0].text;
-                    const aiData = JSON.parse(jsonText);
-                    
-                    // تحديث واجهة تقرير الذكاء الاصطناعي
-                    document.getElementById('aiDefectType').innerText = aiData.defect_type;
-                    document.getElementById('aiDescription').innerText = aiData.description;
-                    
-                    const badge = document.getElementById('aiSeverityBadge');
-                    if(aiData.severity === 3) { badge.innerText = "شديد (3)"; badge.className = "px-2 py-1 rounded text-xs font-bold text-white bg-red-500"; }
-                    else if(aiData.severity === 2) { badge.innerText = "متوسط (2)"; badge.className = "px-2 py-1 rounded text-xs font-bold text-white bg-yellow-500"; }
-                    else { badge.innerText = "طفيف (1)"; badge.className = "px-2 py-1 rounded text-xs font-bold text-white bg-green-500"; }
-
-                    document.getElementById('aiEmptyState').classList.add('hidden');
-                    document.getElementById('aiDataContent').classList.remove('hidden');
-
-                    // ** التحديث التلقائي لحقل القرار الهندسي **
-                    const severitySelect = document.getElementById('severitySelect');
-                    severitySelect.value = aiData.severity || 2;
-                    
-                    // تلميح بصري بأن الحقل تم تحديثه آلياً
-                    severitySelect.classList.add('ring-2', 'ring-secondary');
-                    setTimeout(() => severitySelect.classList.remove('ring-2', 'ring-secondary'), 1500);
-
-                    // حساب القرار تلقائياً
-                    calculateDecision();
-
-                } else {
-                    throw new Error("استجابة غير متوقعة من النموذج.");
-                }
-
-            } catch (error) {
-                showAiError("خطأ أثناء التحليل: " + error.message);
-            } finally {
-                btnAnalyze.disabled = false;
-                document.getElementById('btnAnalyzeText').innerText = "تحليل الصورة بالذكاء الاصطناعي";
-                document.getElementById('aiLoading').classList.add('hidden');
-            }
-        });
-
-        function showAiError(msg) {
-            aiError.innerText = msg;
-            aiError.classList.remove('hidden');
-        }
-
-        // --- 4. دعم القرار (تحديد الأولويات) ---
-        const trafficSelect = document.getElementById('trafficSelect');
-        const riskSelect = document.getElementById('riskSelect');
-        const severitySelect = document.getElementById('severitySelect');
-
-        // تحديث القرار عند تغيير أي من القوائم (المرور أو الخطورة)
-        trafficSelect.addEventListener('change', calculateDecision);
-        riskSelect.addEventListener('change', calculateDecision);
-
-        function calculateDecision() {
-            const traffic = parseInt(trafficSelect.value) || 2;
-            const risk = parseInt(riskSelect.value) || 2;
-            const severity = parseInt(severitySelect.value) || 2;
-            
-            const totalScore = traffic + risk + severity; // Min: 3, Max: 9
-            
-            const decisionResult = document.getElementById('decisionResult');
-            const decisionTitle = document.getElementById('decisionTitle');
-            const decisionDesc = document.getElementById('decisionDesc');
-            const decisionScore = document.getElementById('decisionScore');
-            
-            // إعادة ضبط الكلاسات
-            decisionResult.className = "mt-4 p-4 rounded-xl border-2 text-center transition-all shadow-sm";
-            decisionScore.innerText = totalScore;
-
-            if (totalScore >= 7) {
-                decisionResult.classList.add('bg-red-50', 'border-red-400');
-                decisionTitle.innerText = "أولوية قصوى (تدخل عاجل)";
-                decisionTitle.className = "text-lg font-bold mb-1 text-red-700";
-                decisionDesc.innerText = "طريق حيوي وعيوب شديدة، يتطلب الصيانة الفورية.";
-                decisionDesc.className = "text-xs font-medium text-red-600 mb-2";
-            } else if (totalScore >= 5) {
-                decisionResult.classList.add('bg-yellow-50', 'border-yellow-400');
-                decisionTitle.innerText = "أولوية متوسطة (إدراج بالخطة)";
-                decisionTitle.className = "text-lg font-bold mb-1 text-yellow-700";
-                decisionDesc.innerText = "يجب جدولة الصيانة الوقائية خلال الفترة القادمة.";
-                decisionDesc.className = "text-xs font-medium text-yellow-600 mb-2";
             } else {
-                decisionResult.classList.add('bg-green-50', 'border-green-400');
-                decisionTitle.innerText = "أولوية منخفضة (مراقبة دورية)";
-                decisionTitle.className = "text-lg font-bold mb-1 text-green-700";
-                decisionDesc.innerText = "عيوب طفيفة، يتم التأجيل مع استمرار المراقبة.";
-                decisionDesc.className = "text-xs font-medium text-green-600 mb-2";
+                alert("متصفحك لا يدعم تحديد الموقع.");
             }
         }
+        
+        window.onload = initMap;
 
-        // حساب مبدئي للقرار
-        calculateDecision();
+        // ------------------ 2. الصور والتحليل (محاكاة) ------------------
+        let currentImageLoaded = false;
 
-        // --- 5. تهيئة وتحضير الطباعة ---
-        function prepareAndPrint() {
-            // إعداد تاريخ الطباعة
-            const today = new Date();
-            document.getElementById('printDate').innerText = "تاريخ التقرير: " + today.toLocaleDateString('ar-EG');
-            
-            // نقل قيم حقول الـ Select إلى نصوص ليتم طباعتها بشكل جميل
-            document.getElementById('printTraffic').innerText = trafficSelect.options[trafficSelect.selectedIndex].text;
-            document.getElementById('printRisk').innerText = riskSelect.options[riskSelect.selectedIndex].text;
-            document.getElementById('printSeverity').innerText = severitySelect.options[severitySelect.selectedIndex].text;
-            
-            // أمر الطباعة
-            window.print();
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('imagePreview');
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                document.getElementById('analyzeBtn').disabled = false;
+                currentImageLoaded = true;
+            };
+            reader.readAsDataURL(file);
         }
+
+        async function selectSampleImage(url) {
+            document.getElementById('galleryModal').classList.add('hidden');
+            const preview = document.getElementById('imagePreview');
+            preview.src = url;
+            preview.classList.remove('hidden');
+            document.getElementById('analyzeBtn').disabled = false;
+            currentImageLoaded = true;
+        }
+
+        function analyzeImage() {
+            if (!currentImageLoaded) return;
+
+            const btn = document.getElementById('analyzeBtn');
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = 'جاري التحليل المعمق... ⏳';
+            btn.disabled = true;
+
+            // محاكاة تأخير الشبكة والذكاء الاصطناعي (ثانيتين)
+            setTimeout(() => {
+                // توليد بيانات محاكاة عشوائية للتدريب
+                const mockDataList = [
+                    {
+                        description: "تم رصد حفرة عميقة (Pothole) في طبقة الرصف السطحية مع تآكل في الحواف.",
+                        causes: "ضعف في طبقة الأساس وتسرب المياه، بالإضافة إلى الأحمال المرورية العالية.",
+                        impact: "خطر عالي على إطارات المركبات وتوازنها، وقد يؤدي لحوادث مفاجئة.",
+                        recommendations: "تدخل سريع لترقيع الحفرة وفحص نظام تصريف المياه في الموقع.",
+                        severity: 3
+                    },
+                    {
+                        description: "تشققات تمساحية (Alligator Cracks) تمتد على مساحة واسعة من المسار.",
+                        causes: "إجهاد متكرر بسبب الأحمال الثقيلة، وضعف الهيكل الإنشائي للرصف.",
+                        impact: "تدهور سريع متوقع للطبقات السفلية إذا تسربت المياه، لكنه لا يمثل خطراً فورياً للحوادث.",
+                        recommendations: "إدراج المقطع في خطة الصيانة القادمة لإعادة الرصف الكلي أو الجزئي.",
+                        severity: 2
+                    },
+                    {
+                        description: "تخدد طفيف (Rutting) على طول مسار عجلات الشاحنات.",
+                        causes: "تشوه لدن في طبقة الأسفلت نتيجة درجات الحرارة العالية والأحمال البطيئة.",
+                        impact: "تجمع مياه الأمطار في المسارات مما يقلل من الاحتكاك، لكن الحالة الحالية مستقرة.",
+                        recommendations: "مراقبة دورية للمقطع، ولا يتطلب تدخلاً فورياً.",
+                        severity: 1
+                    }
+                ];
+
+                // اختيار حالة عشوائية
+                const aiData = mockDataList[Math.floor(Math.random() * mockDataList.length)];
+
+                // تحديث الواجهة
+                document.getElementById('aiDesc').innerText = aiData.description;
+                document.getElementById('aiCauses').innerText = aiData.causes;
+                document.getElementById('aiImpact').innerText = aiData.impact;
+                document.getElementById('aiRecs').innerText = aiData.recommendations;
+                document.getElementById('aiResult').classList.remove('hidden');
+                
+                document.getElementById('severitySelect').value = aiData.severity;
+                calculatePriority();
+
+                // إعادة الزر لحالته
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            }, 2000);
+        }
+
+        // ------------------ 3. مصفوفة دعم القرار ------------------
+        function calculatePriority() {
+            const severity = parseInt(document.getElementById('severitySelect').value);
+            const traffic = parseInt(document.getElementById('trafficSelect').value);
+            const risk = parseInt(document.getElementById('riskSelect').value);
+            
+            const totalScore = severity + traffic + risk;
+            
+            const resultBox = document.getElementById('priorityResult');
+            const resultText = document.getElementById('priorityText');
+            const scoreText = document.getElementById('priorityScore');
+            
+            scoreText.innerText = totalScore;
+            
+            resultBox.className = "p-4 rounded-xl border flex items-center justify-between transition-colors";
+            
+            if (totalScore >= 7) {
+                resultBox.classList.add("bg-red-50", "border-red-200");
+                resultText.innerText = "أولوية قصوى (تدخل عاجل)";
+                resultText.className = "text-xl font-bold text-red-700";
+            } else if (totalScore >= 5) {
+                resultBox.classList.add("bg-amber-50", "border-amber-200");
+                resultText.innerText = "أولوية متوسطة (إدراج في الخطة)";
+                resultText.className = "text-xl font-bold text-amber-700";
+            } else {
+                resultBox.classList.add("bg-emerald-50", "border-emerald-200");
+                resultText.innerText = "أولوية منخفضة (مراقبة دورية)";
+                resultText.className = "text-xl font-bold text-emerald-700";
+            }
+        }
+        
+        calculatePriority();
     </script>
 </body>
 </html>
