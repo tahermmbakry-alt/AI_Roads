@@ -48,7 +48,6 @@
         </div>
     </header>
     
-    <!-- Header مخصص للطباعة فقط -->
     <div class="hidden print:block bg-primary-900 text-white p-4 mb-4">
         <h1 class="text-2xl font-bold">تقرير التقييم الفني لأصول الطرق</h1>
         <p class="text-sm">نظام إدارة وتقييم أصول الطرق الذكي</p>
@@ -56,7 +55,6 @@
 
     <main class="container mx-auto px-4 mt-6 max-w-4xl space-y-6">
 
-        <!-- القسم 1: الموقع الجغرافي (GIS) -->
         <section class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100">
             <div class="flex items-center gap-2 mb-4 text-primary-800">
                 <div class="bg-primary-100 p-2 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
@@ -84,7 +82,6 @@
             </div>
         </section>
 
-        <!-- القسم 2: التوثيق البصري والتحليل -->
         <section class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100">
             <div class="flex items-center gap-2 mb-4 text-purple-700">
                 <div class="bg-purple-100 p-2 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
@@ -111,7 +108,6 @@
                 فحص الصورة (محاكاة)
             </button>
 
-            <!-- نتيجة الذكاء الاصطناعي -->
             <div id="aiResult" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <h3 class="font-bold text-slate-800 mb-3 border-b pb-2 flex items-center gap-2">
                     <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">تقرير التحليل الآلي</span>
@@ -125,7 +121,6 @@
             </div>
         </section>
 
-        <!-- القسم 3: دعم القرار والأولويات -->
         <section class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100">
             <div class="flex items-center gap-2 mb-4 text-emerald-700">
                 <div class="bg-emerald-100 p-2 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></div>
@@ -161,7 +156,6 @@
                 </div>
             </div>
 
-            <!-- النتيجة -->
             <div id="priorityResult" class="p-4 rounded-xl border flex items-center justify-between transition-colors bg-slate-50 border-slate-200">
                 <div>
                     <span class="block text-sm font-bold text-slate-500 mb-1">القرار الهندسي الموصى به:</span>
@@ -174,7 +168,6 @@
             </div>
         </section>
 
-        <!-- زر الطباعة -->
         <button onclick="window.print()" class="print:hidden w-full bg-primary-600 hover:bg-primary-700 text-white font-bold py-4 rounded-xl shadow-lg transition-colors flex items-center justify-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
             تصدير وطباعة التقرير الفني
@@ -182,7 +175,6 @@
 
     </main>
 
-    <!-- دليل الاستخدام (Modal) -->
     <div id="manualModal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 print:hidden">
         <div class="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -218,7 +210,7 @@
         </div>
     </div>
 
-    <!-- معرض الصور التجريبية (Modal) -->
+    <!-- معرض الصور التجريبية المحدث بروابط موثوقة -->
     <div id="galleryModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4 print:hidden">
         <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
             <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -228,20 +220,20 @@
                 </button>
             </div>
             <div class="p-4 overflow-y-auto grid grid-cols-2 gap-3 bg-slate-100">
-                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Large_pothole_on_a_city_street.jpg/800px-Large_pothole_on_a_city_street.jpg')">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/Large_pothole_on_a_city_street.jpg/400px-Large_pothole_on_a_city_street.jpg" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="حفرة عميقة" crossorigin="anonymous">
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=400&q=80')">
+                    <img src="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=400&q=80" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="حفرة عميقة" crossorigin="anonymous">
                     <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">حفر عميقة (Pothole)</div>
                 </div>
-                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Alligator_cracking.jpg/800px-Alligator_cracking.jpg')">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Alligator_cracking.jpg/400px-Alligator_cracking.jpg" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تشققات تمساحية" crossorigin="anonymous">
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://images.unsplash.com/photo-1498887960847-2a5e46312788?auto=format&fit=crop&w=400&q=80')">
+                    <img src="https://images.unsplash.com/photo-1498887960847-2a5e46312788?auto=format&fit=crop&w=400&q=80" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تشققات تمساحية" crossorigin="anonymous">
                     <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">تشققات تمساحية</div>
                 </div>
-                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Rutting_on_asphalt_road.jpg/800px-Rutting_on_asphalt_road.jpg')">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Rutting_on_asphalt_road.jpg/400px-Rutting_on_asphalt_road.jpg" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تخدد" crossorigin="anonymous">
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=400&q=80')">
+                    <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=400&q=80" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تخدد" crossorigin="anonymous">
                     <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">تخدد (Rutting)</div>
                 </div>
-                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Asphalt_crack.jpg/800px-Asphalt_crack.jpg')">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Asphalt_crack.jpg/400px-Asphalt_crack.jpg" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تشقق طولي" crossorigin="anonymous">
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://images.unsplash.com/photo-1590487988256-9ed24133863e?auto=format&fit=crop&w=400&q=80')">
+                    <img src="https://images.unsplash.com/photo-1590487988256-9ed24133863e?auto=format&fit=crop&w=400&q=80" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تشقق طولي" crossorigin="anonymous">
                     <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">تشقق طولي</div>
                 </div>
             </div>
@@ -249,7 +241,6 @@
     </div>
 
     <script>
-        // ------------------ 1. الخريطة الجغرافية (GIS) ------------------
         let map;
         let marker;
         
@@ -285,7 +276,6 @@
         
         window.onload = initMap;
 
-        // ------------------ 2. الصور والتحليل (محاكاة) ------------------
         let currentImageLoaded = false;
 
         function handleImageUpload(event) {
@@ -319,9 +309,7 @@
             btn.innerHTML = 'جاري التحليل المعمق... ⏳';
             btn.disabled = true;
 
-            // محاكاة تأخير الشبكة والذكاء الاصطناعي (ثانيتين)
             setTimeout(() => {
-                // توليد بيانات محاكاة عشوائية للتدريب
                 const mockDataList = [
                     {
                         description: "تم رصد حفرة عميقة (Pothole) في طبقة الرصف السطحية مع تآكل في الحواف.",
@@ -346,10 +334,8 @@
                     }
                 ];
 
-                // اختيار حالة عشوائية
                 const aiData = mockDataList[Math.floor(Math.random() * mockDataList.length)];
 
-                // تحديث الواجهة
                 document.getElementById('aiDesc').innerText = aiData.description;
                 document.getElementById('aiCauses').innerText = aiData.causes;
                 document.getElementById('aiImpact').innerText = aiData.impact;
@@ -359,13 +345,11 @@
                 document.getElementById('severitySelect').value = aiData.severity;
                 calculatePriority();
 
-                // إعادة الزر لحالته
                 btn.innerHTML = originalBtnText;
                 btn.disabled = false;
             }, 2000);
         }
 
-        // ------------------ 3. مصفوفة دعم القرار ------------------
         function calculatePriority() {
             const severity = parseInt(document.getElementById('severitySelect').value);
             const traffic = parseInt(document.getElementById('trafficSelect').value);
