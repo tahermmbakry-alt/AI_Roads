@@ -38,7 +38,7 @@
                 </svg>
                 <div>
                     <h1 class="text-xl font-bold leading-tight">نظام إدارة وتقييم أصول الطرق الذكي</h1>
-                    <p class="text-xs text-primary-100 opacity-80">نسخة المحاكاة التدريبية (بدون إنترنت)</p>
+                    <p class="text-xs text-primary-100 opacity-80">نسخة المحاكاة التدريبية</p>
                 </div>
             </div>
             <button onclick="document.getElementById('manualModal').classList.remove('hidden')" class="text-primary-100 hover:text-white flex items-center gap-1 bg-primary-800 px-3 py-1.5 rounded-lg text-sm transition-colors">
@@ -55,6 +55,7 @@
 
     <main class="container mx-auto px-4 mt-6 max-w-4xl space-y-6">
 
+        <!-- القسم 1: الموقع الجغرافي -->
         <section class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100">
             <div class="flex items-center gap-2 mb-4 text-primary-800">
                 <div class="bg-primary-100 p-2 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
@@ -82,6 +83,7 @@
             </div>
         </section>
 
+        <!-- القسم 2: التحليل -->
         <section class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100">
             <div class="flex items-center gap-2 mb-4 text-purple-700">
                 <div class="bg-purple-100 p-2 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg></div>
@@ -121,6 +123,7 @@
             </div>
         </section>
 
+        <!-- القسم 3: الأولويات -->
         <section class="bg-white rounded-2xl shadow-lg p-5 border border-slate-100">
             <div class="flex items-center gap-2 mb-4 text-emerald-700">
                 <div class="bg-emerald-100 p-2 rounded-lg"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg></div>
@@ -175,6 +178,41 @@
 
     </main>
 
+    <!-- المعرض باستخدام الصور المرفقة من المستخدم -->
+    <div id="galleryModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4 print:hidden">
+        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800">اختر صورة تجريبية للتدريب</h3>
+                <button onclick="document.getElementById('galleryModal').classList.add('hidden')" class="text-slate-400 hover:text-red-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <div class="p-4 overflow-y-auto grid grid-cols-2 gap-3 bg-slate-100">
+                <!-- الصورة الأولى: حفرة -->
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('download.jpg')">
+                    <img src="download.jpg" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="حفرة وتشققات">
+                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">حفر عميقة (Pothole)</div>
+                </div>
+                <!-- الصورة الثانية: انهيار عرضي -->
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('gettyimages-1343022205-612x612.jpg')">
+                    <img src="gettyimages-1343022205-612x612.jpg" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="انهيار الرصف">
+                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">انهيار عرضي شديد</div>
+                </div>
+                <!-- الصورة الثالثة: تشقق طولي -->
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('gettyimages-2157766987-612x612.jpg')">
+                    <img src="gettyimages-2157766987-612x612.jpg" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تشقق طولي">
+                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">تشقق طولي (Longitudinal)</div>
+                </div>
+                <!-- الصورة الرابعة: انهيار حواف -->
+                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('Screenshot 2026-10-25 094304.png')">
+                    <img src="Screenshot 2026-10-25 094304.png" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="انهيار الحواف">
+                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">تلف الحواف (Edge Damage)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة المساعدة -->
     <div id="manualModal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4 print:hidden">
         <div class="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
             <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
@@ -186,56 +224,14 @@
             <div class="p-6 space-y-4 text-sm text-slate-700">
                 <p>هذا التطبيق يحاكي دورة عمل المهندس في نظام الصيانة التنبؤية (Predictive Maintenance):</p>
                 <ul class="space-y-3">
-                    <li class="flex gap-2">
-                        <span class="bg-primary-100 text-primary-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">1</span>
-                        <span><strong>تحديد الموقع (GIS):</strong> حدد موقع المشكلة بدقة عبر الخريطة أو زر الـ GPS.</span>
-                    </li>
-                    <li class="flex gap-2">
-                        <span class="bg-purple-100 text-purple-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">2</span>
-                        <span><strong>تحليل الصورة (محاكاة):</strong> التقط صورة وسيتم تحليلها لتقديم تصنيف وشدة التلف (Condition) تلقائياً.</span>
-                    </li>
-                    <li class="flex gap-2">
-                        <span class="bg-emerald-100 text-emerald-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">3</span>
-                        <span><strong>دعم القرار:</strong> كمهندس، قم بتقييم حجم المرور ومستوى الخطورة. سيقوم النظام بحساب الأولوية النهائية للتدخل.</span>
-                    </li>
-                    <li class="flex gap-2">
-                        <span class="bg-slate-200 text-slate-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">4</span>
-                        <span><strong>التقرير النهائي:</strong> اضغط طباعة لاستخراج تقرير فني احترافي.</span>
-                    </li>
+                    <li class="flex gap-2"><span class="bg-primary-100 text-primary-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">1</span><span><strong>تحديد الموقع:</strong> حدد موقع المشكلة بدقة عبر الخريطة.</span></li>
+                    <li class="flex gap-2"><span class="bg-purple-100 text-purple-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">2</span><span><strong>التحليل:</strong> اختر صورة للعيب وسيتم تقييم الشدة (Condition) تلقائياً.</span></li>
+                    <li class="flex gap-2"><span class="bg-emerald-100 text-emerald-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">3</span><span><strong>دعم القرار:</strong> قيّم حجم المرور والخطورة لحساب الأولوية.</span></li>
+                    <li class="flex gap-2"><span class="bg-slate-200 text-slate-800 w-6 h-6 rounded-full flex items-center justify-center font-bold shrink-0">4</span><span><strong>التقرير:</strong> اضغط طباعة لاستخراج تقرير فني.</span></li>
                 </ul>
             </div>
             <div class="p-4 bg-slate-50 border-t border-slate-100">
-                <button onclick="document.getElementById('manualModal').classList.add('hidden')" class="w-full bg-primary-600 text-white font-bold py-2 rounded-lg hover:bg-primary-700">فهمت، ابدأ العمل</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- معرض الصور التجريبية المحدث بروابط موثوقة -->
-    <div id="galleryModal" class="hidden fixed inset-0 bg-slate-900/80 z-50 flex items-center justify-center p-4 print:hidden">
-        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-            <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
-                <h3 class="font-bold text-lg text-slate-800">اختر صورة تجريبية للتدريب</h3>
-                <button onclick="document.getElementById('galleryModal').classList.add('hidden')" class="text-slate-400 hover:text-red-500">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-            </div>
-            <div class="p-4 overflow-y-auto grid grid-cols-2 gap-3 bg-slate-100">
-                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=400&q=80')">
-                    <img src="https://images.unsplash.com/photo-1515162816999-a0c47dc192f7?auto=format&fit=crop&w=400&q=80" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="حفرة عميقة" crossorigin="anonymous">
-                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">حفر عميقة (Pothole)</div>
-                </div>
-                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://images.unsplash.com/photo-1498887960847-2a5e46312788?auto=format&fit=crop&w=400&q=80')">
-                    <img src="https://images.unsplash.com/photo-1498887960847-2a5e46312788?auto=format&fit=crop&w=400&q=80" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تشققات تمساحية" crossorigin="anonymous">
-                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">تشققات تمساحية</div>
-                </div>
-                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=400&q=80')">
-                    <img src="https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=400&q=80" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تخدد" crossorigin="anonymous">
-                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">تخدد (Rutting)</div>
-                </div>
-                <div class="relative group cursor-pointer overflow-hidden rounded-lg shadow-sm" onclick="selectSampleImage('https://images.unsplash.com/photo-1590487988256-9ed24133863e?auto=format&fit=crop&w=400&q=80')">
-                    <img src="https://images.unsplash.com/photo-1590487988256-9ed24133863e?auto=format&fit=crop&w=400&q=80" class="w-full h-32 object-cover group-hover:scale-105 transition-transform" alt="تشقق طولي" crossorigin="anonymous">
-                    <div class="absolute bottom-0 inset-x-0 bg-black/60 text-white text-xs text-center py-1">تشقق طولي</div>
-                </div>
+                <button onclick="document.getElementById('manualModal').classList.add('hidden')" class="w-full bg-primary-600 text-white font-bold py-2 rounded-lg hover:bg-primary-700">ابدأ العمل</button>
             </div>
         </div>
     </div>
@@ -312,25 +308,25 @@
             setTimeout(() => {
                 const mockDataList = [
                     {
-                        description: "تم رصد حفرة عميقة (Pothole) في طبقة الرصف السطحية مع تآكل في الحواف.",
+                        description: "تم رصد حفرة عميقة في طبقة الرصف السطحية مع تآكل وتشقق في الحواف.",
                         causes: "ضعف في طبقة الأساس وتسرب المياه، بالإضافة إلى الأحمال المرورية العالية.",
                         impact: "خطر عالي على إطارات المركبات وتوازنها، وقد يؤدي لحوادث مفاجئة.",
                         recommendations: "تدخل سريع لترقيع الحفرة وفحص نظام تصريف المياه في الموقع.",
                         severity: 3
                     },
                     {
-                        description: "تشققات تمساحية (Alligator Cracks) تمتد على مساحة واسعة من المسار.",
-                        causes: "إجهاد متكرر بسبب الأحمال الثقيلة، وضعف الهيكل الإنشائي للرصف.",
-                        impact: "تدهور سريع متوقع للطبقات السفلية إذا تسربت المياه، لكنه لا يمثل خطراً فورياً للحوادث.",
-                        recommendations: "إدراج المقطع في خطة الصيانة القادمة لإعادة الرصف الكلي أو الجزئي.",
-                        severity: 2
+                        description: "انهيار عرضي أو تشقق طولي واضح في بنية الطريق.",
+                        causes: "هبوط في التربة السفلية أو إجهاد إنشائي بسبب الأحمال الثقيلة.",
+                        impact: "تدهور سريع متوقع للطبقات السفلية واحتمالية تضرر هياكل السيارات.",
+                        recommendations: "إدراج المقطع في خطة الصيانة العاجلة لإعادة الرصف الكلي أو الجزئي.",
+                        severity: 3
                     },
                     {
-                        description: "تخدد طفيف (Rutting) على طول مسار عجلات الشاحنات.",
-                        causes: "تشوه لدن في طبقة الأسفلت نتيجة درجات الحرارة العالية والأحمال البطيئة.",
-                        impact: "تجمع مياه الأمطار في المسارات مما يقلل من الاحتكاك، لكن الحالة الحالية مستقرة.",
-                        recommendations: "مراقبة دورية للمقطع، ولا يتطلب تدخلاً فورياً.",
-                        severity: 1
+                        description: "تلف وتآكل ملحوظ في حواف الطريق الأسفلتي.",
+                        causes: "نقص الدعم الجانبي للرصف أو خروج الشاحنات عن المسار المخصص.",
+                        impact: "يقلل من العرض الآمن للطريق ويعرض المركبات لخطر الانزلاق.",
+                        recommendations: "تدعيم أكتاف الطريق وإصلاح الحواف المتضررة.",
+                        severity: 2
                     }
                 ];
 
